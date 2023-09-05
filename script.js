@@ -1,3 +1,36 @@
+// depth of the tree - the longest path from root to leaf
+// this question is recursive in nature
+
+class TreeNode {
+  constructor(val) {
+    this.val = val;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+function maxDepth(root) {
+  if (root === null) {
+    // check if nood exist, if it exist, it go ahead and execute below function if root === to null then it nothing to exicute and it will return 0;
+    return 0; // it returns 0 back (nothing)
+  }
+
+  const leftDepth = maxDepth(root.left);
+  const rightDepth = maxDepth(root.right);
+
+  return Math.max(leftDepth, rightDepth) + 1; // +1 because it does not count root level node;;;;; it seems like it returning up values like 1 or 2
+}
+
+// Example usage:
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+
+const depth = maxDepth(root);
+console.log("Maximum depth of the tree:", depth); // Output: 3
+
 let as = 12343;
 let d = [];
 function aap(jd) {
