@@ -1,3 +1,33 @@
+///////////////
+// Given an integer array 'numbers', return the third distinct maximum number in the array. If the third distinct maximum doesn't exist, return the maximum.
+///////////////
+
+function findThirdMaximum(numbers) {
+let newArray = []
+  // set 
+  let newSet = new Set(numbers)
+//  console.log(newSet)
+  let loopSet = newSet.forEach(i => newArray.push(i));
+  // console.log(newArray);
+
+  let sortNew = newArray.sort((a, b) => a -b);
+  // console.log(sortNew);
+
+  // sort 
+  let newSort = newSet.sort;
+  // console.log(newSort);
+  // return 3rd from last
+
+  let answer = sortNew[sortNew.length - 3];
+  return answer
+
+}
+
+console.log(findThirdMaximum([
+  1,3,4,7,2,5,3,-1,-4,6,7,8,9,11,11,-5,2313,12
+]))
+
+
 // depth of the tree - the longest path from root to leaf
 // this question is recursive in nature
 
