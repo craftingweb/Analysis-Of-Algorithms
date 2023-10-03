@@ -1,4 +1,28 @@
 ///////////////
+
+
+58. Length of Last Word
+// It looks like nested loops but it is the same loop so it is O(n)
+var lengthOfLastWord = function(s) {
+
+    let lastWord = 0;
+    for (let i = s.length-1; i >= 0; i--){
+        if (s[i] !== " "){
+            for (let j = i; j>=0; j--){
+                if (s[j] !== " "){
+                    lastWord++
+                } else {
+                    return lastWord
+                }
+            }
+    return lastWord;
+    }
+
+}
+};
+
+
+
 // Given an integer array 'numbers', return the third distinct maximum number in the array. If the third distinct maximum doesn't exist, return the maximum.
 ///////////////
 
