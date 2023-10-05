@@ -1,5 +1,37 @@
 ///////////////
 
+860. Lemonade Change
+
+var lemonadeChange = function(bills) {
+    let fives = 0; // Number of $5 bills on hand
+    let tens = 0;  // Number of $10 bills on hand
+    
+    for (let i = 0; i < bills.length; i++) {
+        if (bills[i] === 5) {
+            fives++; // Collecting $5, no change needed
+        } else if (bills[i] === 10) {
+            if (fives >= 1) {
+                fives--; // Give $5 in change
+                tens++;  // Collect $10
+            } else {
+                return false; // Cannot provide change
+            }
+        } else if (bills[i] === 20) {
+            if (tens >= 1 && fives >= 1) {
+                tens--;  // Give $10 in change
+                fives--; // Give $5 in change
+            } else if (fives >= 3) {
+                fives -= 3; // Give three $5 bills in change
+            } else {
+                return false; // Cannot provide change
+            }
+        }
+    }
+    
+    return true; // All customers received correct change
+};
+
+
 
 58. Length of Last Word
 // It looks like nested loops but it is the same loop so it is O(n)
