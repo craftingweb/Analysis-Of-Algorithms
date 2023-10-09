@@ -1,5 +1,17 @@
 ///////////////
 
+217. Contains duplicate
+    //Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.
+
+var containsDuplicate = function(nums) {
+    let set = new Set(nums);
+    return set.size != nums.length; // set has property size not length
+    // The not-equal-to operator ( != ) returns true if the operands don't have the same value; otherwise, it returns false
+};
+
+========================================================
+
+
 860. Lemonade Change
 
 var lemonadeChange = function(bills) {
