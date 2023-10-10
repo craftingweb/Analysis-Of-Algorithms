@@ -1,5 +1,19 @@
 ///////////////
 
+704. Binary Search
+var search = function(nums, target) {
+    let left = 0 ; // = 0 not nums[0]
+    let right = nums.length-1; // need to add -1
+    // let medium;
+    while (left <= right) {// need to add = to <
+        let medium = left + Math.floor((right - left)/2); // need to add left
+        if (nums[medium]===target) return medium;
+        else if (nums[medium]<target) left = medium + 1;
+        else right = medium - 1
+        }
+   return -1
+}
+
 217. Contains duplicate
     //Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.
 
