@@ -1,5 +1,29 @@
 ///////////////
 
+class EventEmitter {
+    eventMap={}
+
+	subscribe(eventName, callback) {
+      	if (!this.eventMap.hasOwnProperty(eventName)){
+              this.eventMap[eventName] = new Set();
+          }
+          this.eventMap[eventName].add(callback)
+		return {
+			unsubscribe: () => {
+				this.eventMap[eventName].delete(callback)
+			}
+		};
+	}
+    
+	emit(eventName, args = []) {
+		const res = [];
+        (this.eventMap[eventName] ?? [])
+        .forEach((callback) => res.push(callback(...args)));
+        return res
+	}
+}
+
+/////////
 704. Binary Search
 var search = function(nums, target) {
     let left = 0 ; // = 0 not nums[0]
