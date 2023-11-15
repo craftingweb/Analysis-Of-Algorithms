@@ -1,4 +1,17 @@
-///////////////
+/////////////// Hash Map for two sum
+
+var twoSum = function(nums, target) {
+        let map = new Map();
+    for (let c = 0; c < nums.length; c++){
+        let compliment = target - nums[c];
+        if (map.has(compliment)) {
+            return [c, map.get(compliment)]
+        } 
+            map.set(nums[c], c);
+        
+    }
+};
+///////////
 
 class EventEmitter {
     eventMap={}
