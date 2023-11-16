@@ -1,3 +1,21 @@
+/////
+var sumOfMultiples = function(n) {
+    let arr = [];
+    let sum = 0;
+    for (let i = 1; i <= n; i++){
+    if (i % 7 === 0 || i % 5 === 0 || i % 3 === 0)  
+    sum += i; 
+    }
+ 
+    for (let c = 0; c < arr.length; c++){
+       sum += arr[c];
+    }
+    return sum;
+};
+
+
+
+
 /////////////// Hash Map for two sum
 
 var twoSum = function(nums, target) {
