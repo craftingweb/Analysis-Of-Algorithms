@@ -1,3 +1,356 @@
+//#region Heap
+/**
+ * @template TItem
+ * @typedef {Object} HeapConstructorParams<TItem>
+ * @property {(a: TItem, b: TItem) => boolean} isMorePriority
+ * @property {TItem[]} [initialData]
+ * @property {(node: TItem, index: number) => any} [onHeapIndexChange]
+ */
+
+/**
+ * @template TItem
+ */
+class Heap {
+  /**
+   * @private
+   * @type {(TItem | undefined)[]}
+   */
+  _nodes;
+
+  /**
+   * @private
+   * @type {number}
+   */
+  _size;
+
+  /** @type {boolean} */
+  isEnabledTrackingIndex;
+
+  /** @param {HeapConstructorParams<TItem>} param0 */
+  constructor({ initialData, isMorePriority, onHeapIndexChange }) {
+    /**
+     * @private
+     * @param {TItem | undefined} a
+     * @param {TItem | undefined} b
+     * @returns {boolean}
+     */
+    this._isMorePriority = (a, b) => {
+      if (b == undefined) return true;
+      if (a == undefined) return false;
+      return isMorePriority(a, b);
+    };
+
+    /**
+     * @private
+     */
+    this._onHeapIndexChange = onHeapIndexChange;
+
+    /**
+     * @private
+     * @param {number} index
+     * @param {TItem} node
+     */
+    this._setNodeAndTriggerChange = (index, node) => {
+      if (index >= this._nodes.length) return;
+      this._nodes[index] = node;
+
+      if (this.isEnabledTrackingIndex) this._onHeapIndexChange?.(node, index);
+    };
+
+    this.isEnabledTrackingIndex = !!onHeapIndexChange;
+    if (initialData?.length) this.build(initialData);
+    else {
+      this._nodes = [];
+      this._size = 0;
+    }
+  }
+
+  /**
+   * @param {number} index
+   */
+  floatNode(index) {
+    let parentIndex;
+    let node = this._nodes[index];
+
+    while ((index - 1) >> 1 >= 0) {
+      parentIndex = (index - 1) >> 1;
+      if (this._isMorePriority(this._nodes[parentIndex], node)) break;
+
+      this._setNodeAndTriggerChange(index, this._nodes[parentIndex]);
+      index = parentIndex;
+    }
+    this._setNodeAndTriggerChange(index, node);
+  }
+
+  /**
+   * @param {number} index
+   */
+  sinkNode(index) {
+    let childIndex;
+    let node = this._nodes[index];
+
+    while (index * 2 + 1 < this._nodes.length) {
+      childIndex = index * 2 + 1;
+      if (
+        childIndex + 1 < this._nodes.length &&
+        this._isMorePriority(
+          this._nodes[childIndex + 1],
+          this._nodes[childIndex]
+        )
+      )
+        childIndex++;
+
+      if (this._isMorePriority(node, this._nodes[childIndex])) break;
+
+      this._setNodeAndTriggerChange(index, this._nodes[childIndex]);
+      index = childIndex;
+    }
+    this._setNodeAndTriggerChange(index, node);
+  }
+
+  /**
+   * Sink/Float node.
+   * @param {number} index
+   */
+  adjustNode(index) {
+    this.sinkNode(index);
+    this.floatNode(index);
+  }
+
+  /**
+   * @param {TItem[]} data
+   */
+  build(data) {
+    const isEnabledTrackingIndex = this.isEnabledTrackingIndex;
+    this.isEnabledTrackingIndex = false;
+
+    this._nodes = [...data];
+    this._size = data.length;
+    const lastNonLeafIndex = (data.length - 2) >> 1;
+    for (let i = lastNonLeafIndex; i >= 0; i--) {
+      this.sinkNode(i);
+    }
+
+    if (isEnabledTrackingIndex) {
+      this.isEnabledTrackingIndex = true;
+      this._nodes.forEach((node, index) => {
+        this._onHeapIndexChange?.(node, index);
+      });
+    }
+  }
+
+  /**
+   * @param {...TItem} nodes
+   */
+  add(...nodes) {
+    nodes.forEach((node) => {
+      this._nodes.push(node);
+      this._size++;
+      this.floatNode(this._nodes.length - 1);
+    });
+  }
+
+  pop() {
+    if (this._nodes[0] == null) return null;
+
+    const result = this._nodes[0];
+    this._nodes[0] = null;
+    this._size--;
+    this.sinkNode(0);
+
+    return result;
+  }
+
+  getSize() {
+    return this._size;
+  }
+
+  getTop() {
+    return this._nodes[0];
+  }
+
+  getSecond() {
+    return this._isMorePriority(this._nodes[1], this._nodes[2])
+      ? this._nodes[1]
+      : this._nodes[2];
+  }
+}
+//#endregion
+
+const scoresCache = new Map();
+const visited = new Map();
+
+function genRandNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * @param {string} s
+ */
+function getState(s) {
+  let state = 7;
+  for (let i = 0; i < s.length; i++) {
+    if (s[i - 1] == s[i] && s[i] == s[i + 1]) state += 8;
+
+    let c = s.charCodeAt(i);
+    if (c >= 48 && c <= 57) state &= ~1;
+    if (c >= 65 && c <= 90) state &= ~2;
+    if (c >= 97 && c <= 122) state &= ~4;
+  }
+
+  return state;
+}
+
+/**
+ * @param {string} s
+ */
+function calcHeuristicScore(s) {
+  // if (scoresCache.has(s)) return scoresCache.get(s);
+
+  let res = 0;
+  let l = s.length;
+  if (l < 6) res += ((6 - l) * 2) ** 2;
+  if (l > 20) res += ((l - 20) * 2) ** 2;
+
+  let state = getState(s);
+  res += state & ~7;
+
+  res += state & 1;
+  res += (state & 2) >> 1;
+  res += (state & 4) >> 1;
+  scoresCache.set(s, res);
+  return res;
+}
+
+/**
+ * @param {string} s
+ * @returns {Set<string>}
+ */
+function nextStrings(s) {
+  let cntNum = 0;
+  let cntLow = 0;
+  let cntUpp = 0;
+  let n = s.length;
+  let set = new Set();
+  let res = new Set();
+
+  for (let i = 0; i < n; i++) {
+    let c = s.charCodeAt(i);
+    if (c >= 48 && c <= 57) cntNum++;
+    if (c >= 65 && c <= 90) cntUpp++;
+    if (c >= 97 && c <= 122) cntLow++;
+    set.add(c);
+  }
+
+  if (n < 6) {
+    for (let i = 0; i < n; i++) {
+      let cb = s.charCodeAt(i - 1);
+      let ca = s.charCodeAt(i);
+
+      if (!i || cb == ca) {
+        let c;
+        let sb = s.substring(0, i);
+        let sa = s.substring(i);
+
+        do c = genRandNumber(48, 57);
+        while (cb == c || ca == c);
+        res.add(sb + String.fromCharCode(c) + sa);
+
+        do c = genRandNumber(65, 90);
+        while (cb == c || ca == c);
+        res.add(sb + String.fromCharCode(c) + sa);
+
+        do c = genRandNumber(97, 122);
+        while (cb == c || ca == c);
+        res.add(sb + String.fromCharCode(c) + sa);
+      }
+    }
+  } else if (n > 20) {
+    for (let i = 0; i < n; i++) {
+      if (s[i] == s[i - 1]) continue;
+      let c = s.charCodeAt(i);
+      if (c >= 48 && c <= 57 && cntNum < 2) continue;
+      if (c >= 65 && c <= 90 && cntUpp < 2) continue;
+      if (c >= 97 && c <= 122 && cntLow < 2) continue;
+
+      let sb = s.substring(0, i);
+      let sa = s.substring(i + 1);
+      res.add(sa + sb);
+    }
+  }
+  else {
+    for (let i = 0; i < n; i++) {
+      let cb = s.charCodeAt(i - 1);
+      let ca = s.charCodeAt(i);
+
+      if (!i || cb == ca) {
+        let c;
+        let sb = s.substring(0, i);
+        let sa = s.substring(i + 1);
+        let sa2 = s.substring(i);
+
+        do c = genRandNumber(48, 57);
+        while (cb == c || ca == c);
+        res.add(sb + String.fromCharCode(c) + sa);
+        if (n < 20) res.add(sb + String.fromCharCode(c) + sa2);
+
+        do c = genRandNumber(65, 90);
+        while (cb == c || ca == c);
+        res.add(sb + String.fromCharCode(c) + sa);
+        if (n < 20) res.add(sb + String.fromCharCode(c) + sa2);
+
+        do c = genRandNumber(97, 122);
+        while (cb == c || ca == c);
+        res.add(sb + String.fromCharCode(c) + sa);
+        if (n < 20) res.add(sb + String.fromCharCode(c) + sa2);
+      }
+    }
+  }
+
+  return res;
+}
+
+/**
+ * @param {string} password
+ * @return {number}
+ */
+var strongPasswordChecker = function (password) {
+  if (scoresCache.size > 100000) scoresCache.clear();
+  visited.clear();
+  /** @type {Heap<string>} */
+  let h = new Heap({
+    isMorePriority: (a, b) => scoresCache.get(a) < scoresCache.get(b),
+  });
+
+  let score = calcHeuristicScore(password);
+  if (!score) return 0;
+
+  h.add(password);
+  visited.set(password, 0);
+  res = 1000;
+  i = 10000;
+
+  while ((i && h.getSize()) || (res == 1000)) {
+    let u = h.pop();
+    let vi = visited.get(u) + 1;
+    if (vi >= res) continue;
+    i--;
+
+    let nexts = nextStrings(u);
+    for (let v of nexts) {
+      if (visited.has(v)) continue;
+      score = calcHeuristicScore(v);
+      if (!score) res = Math.min(res, vi)
+
+      visited.set(v, vi);
+      h.add(v);
+    }
+  }
+
+  return res;
+};
+
+
 /////
 var sumOfMultiples = function(n) {
     let arr = [];
