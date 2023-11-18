@@ -1,3 +1,14 @@
+//
+var truncateSentence = function(s, k) {
+    let newS = [];
+    let oldS= s.split(' ');
+    for (let i = 0; i < k; i++){
+        newS.push(oldS[i])
+    }
+    return newS.join(" ")
+};
+
+
 //#region Heap
 /**
  * @template TItem
