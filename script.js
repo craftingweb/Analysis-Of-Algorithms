@@ -1,3 +1,18 @@
+///
+var differenceOfSum = function(nums) {
+    let sum = nums.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue;
+    })
+
+    let digitSum = nums.join("")
+    .split("")
+    .reduce((accumulator, currentValue) => {
+      return parseInt(accumulator) + parseInt(currentValue);
+    })
+
+    return Math.abs(sum - digitSum);
+};
+
 ////
 var arrayStringsAreEqual = function(word1, word2) {
     let w1 = word1.join('')
