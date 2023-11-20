@@ -1,4 +1,6 @@
 ///
+
+///
 var differenceOfSum = function(nums) {
     let sum = nums.reduce((accumulator, currentValue) => {
         return accumulator + currentValue;
