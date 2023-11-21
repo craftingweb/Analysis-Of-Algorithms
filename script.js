@@ -1,4 +1,46 @@
 ///
+/* Node represent as a class
+if no children nodes then is NULL
+left and right children name as left and right
+value of node put inside constructor.
+default node won't have any children aka = null
+to call a node use keyword new and value:
+const a = new Node("a");
+*/
+class Node {
+  constructor(val) {
+    this.val = val;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+/*
+Depth first search use by stack (array data structure): 
+methods push & pop => to the end add & remove node.
+End of my array represent as top of the stack
+we have to initialize stack with root node
+we need to run our algorythm while something in our stack
+we removing top of the stack and it gives us that object by assigning
+and root here is just a node like Node with value a
+if only one child we have to make guard statement if only it exists
+we first push right branch because it will below left
+then need to create array to store values of removed nodes
+by pushing them to array of current.val
+*/
+
+const depthFirstSearch = (root) => {
+  const result = [];
+  const stack = [root];
+  while (stack.length > 0) {
+    let current = stack.pop();
+    result.push(current.val);
+    if (current.right) stack.push(current.right);
+    if (current.left) stack.push(current.left);
+  }
+  return result;
+};
+
 
 ///
 var differenceOfSum = function(nums) {
