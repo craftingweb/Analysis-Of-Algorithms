@@ -1,4 +1,64 @@
 ///
+////////////////////////// Template ////////////////////////////////////
+function Bisect() {
+    return { insort_right, insort_left, bisect_left, bisect_right }
+    function insort_right(a, x, lo = 0, hi = null) {
+        lo = bisect_right(a, x, lo, hi);
+        a.splice(lo, 0, x);
+    }
+    function bisect_right(a, x, lo = 0, hi = null) { // > upper_bound
+        if (lo < 0) throw new Error('lo must be non-negative');
+        if (hi == null) hi = a.length;
+        while (lo < hi) {
+            let mid = parseInt((lo + hi) / 2);
+            a[mid] > x ? hi = mid : lo = mid + 1;
+        }
+        return lo;
+    }
+    function insort_left(a, x, lo = 0, hi = null) {
+        lo = bisect_left(a, x, lo, hi);
+        a.splice(lo, 0, x);
+    }
+    function bisect_left(a, x, lo = 0, hi = null) { // >= lower_bound
+        if (lo < 0) throw new Error('lo must be non-negative');
+        if (hi == null) hi = a.length;
+        while (lo < hi) {
+            let mid = parseInt((lo + hi) / 2);
+            a[mid] < x ? lo = mid + 1 : hi = mid;
+        }
+        return lo;
+    }
+}
+///////////////////////////////////////////////////////////////////
+
+const minReverseOperations = (n, p, banned, k) => {
+    let res = Array(n).fill(-1), evenOdd = [[], []], q = [p], bi = new Bisect();
+    if (k == 1) {
+        res[p] = 0;
+        return res;
+    }
+    banned = new Set(banned);
+    for (let i = 0; i < n; i++) {
+        if (i != p && !banned.has(i)) evenOdd[i % 2].push(i);
+    }
+    res[p] = 0;
+    while (q.length) {
+        let cur = q.shift();
+        let L = Math.max(-(k - 1), k - 1 - cur * 2), R = Math.min(k - 1, -(k - 1) + (n - cur - 1) * 2); // caculate the jump range
+        let x = (cur + k - 1) % 2, idx = bi.bisect_left(evenOdd[x], cur + L);
+        while (1) { // not reached position, can be jump from current position (cur -> next)
+            let next = evenOdd[x][idx];
+            if (next == undefined || next > cur + R) break;
+            res[next] = res[cur] + 1;
+            q.push(next);
+            evenOdd[x].splice(idx, 1);
+        }
+    }
+    return res;
+};
+
+
+///
 /* Node represent as a class
 if no children nodes then is NULL
 left and right children name as left and right
