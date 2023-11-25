@@ -1,4 +1,78 @@
 ///
+
+/* Breadth first search use Queue data structure. O(n)
+back ---queque---> front. Things get from the back and leave from front
+array.shift() - removes first element from an array and return it so we can use it: const firstItem = [1,2,3].shift();
+The order that you visited an queque derived from order in which things leave an queue: 
+Reqursive order use stack, so there is no way to do it recursion for queue.
+
+const breadthFirstSearch = (root) => {
+  const values = [];
+  if (root === null) return [];
+  const queue = [root];
+  while (queue.length > 0) {
+    const current = queue.shift();
+    values.push(current.val);
+    if (current.left !== null) queue.push(current.left);
+    if (current.right !== null) queue.push(current.right);
+  }
+  return values;
+};
+*/
+/* BFS with target;
+once it will loop through the queue and not find target, it will exit and then need to write return false
+const breadthFirstSearch = (root, target) => {
+  if (root === null) return false;
+  const queque = [root];
+  while (queque.length > 0) {
+    const cur = queque.shift();
+    if (cur.val === target) return true;
+    else if (cur.left !== null) queque.push(cur.left);
+    else if (cur.right !== null ) queque.push(cur.right);
+  }
+  return false;
+};
+
+Recursive breadthFirstSearch with target
+inside of function we calling the same function and passing left for one function call and for other function call right node.
+breadFirstSearch(root.left, target); it gives boolean data so we can use trick by help of || ;; return left subtre || right subtree if either is true it will return true, else return false
+we can add that if root's node value = to target then return true;
+important that this test case have to be below another one when checking if it is = to null, otherwise it can not read property of null.val
+
+const breadFirstSearch = (root, target) => {
+  if (root === null) return false;
+  if (root.val === target) return true;
+  return (
+    breadFirstSearch(root.left, target) || breadFirstSearch(root.right, target)
+  );
+};
+
+Tree sum recursively return root.val + treeSum(root.left) + treeSum(root.left); need value and then left calculate everything on the left and right calculate everything on the right.
+
+const treeSum = (root) => {
+  if (root = null) return 0;
+  return root.val + treeSum(root.left) + treeSum(root.left);
+};
+
+// Itirative approach for tree sum, need sum+=current.val after we shift() we getting this node that we removing and we adding its value to sum, instead of put it inside of if statement. It still works but it will be repetitive twice. As well as we need sum initilize to root.val in that case. Otherwise it won't count root value.
+const treeSum = (root) => {
+  const sum = 0;
+  const queue = [root];
+  if (root === null) return 0;
+  while (queue.length > 0) {
+    const current = queue.shift();
+    sum += current.val;
+    if (current.left !== null) {
+      queue.push(current.left);
+    }
+    if (current.right !== null) {
+      queue.push(current.right);
+    }
+  }
+  return sum;
+};
+*/
+
 ////////////////////////// Template ////////////////////////////////////
 function Bisect() {
     return { insort_right, insort_left, bisect_left, bisect_right }
