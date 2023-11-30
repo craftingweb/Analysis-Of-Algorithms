@@ -1,4 +1,6 @@
 ///
+
+///
 var minimumDifference = function (nums) {
   const N = nums.length;
   const n = N / 2;
