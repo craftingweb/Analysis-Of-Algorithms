@@ -1,4 +1,60 @@
+////
+
 ///
+/**
+ * @param {number[]} nums1
+ * @param {number[]} nums2
+ * @param {number} x
+ * @return {number}
+ */
+// var minimumTime = function(nums1, nums2, x) {
+    
+// };
+
+function minimumTime(nums1, nums2, x) {
+    const n = nums1.length;
+    const ind = new Array(n);
+    let s = 0;
+    let d = 0;
+
+    for (let i = 0; i < n; ++i) {
+        ind[i] = i;
+        s += nums1[i];
+        d += nums2[i];
+    }
+
+    if (s <= x) {
+        return 0;
+    }
+
+    ind.sort((a, b) => {
+        return nums2[a] - nums2[b];
+    });
+
+    const dp = new Array(n + 1).fill(0);
+    let r = n + 1;
+
+    for (let i = 1; i <= n; ++i) {
+        for (let j = Math.min(i, r - 1); j; --j) {
+            dp[j] = Math.max(dp[j], dp[j - 1] + nums2[ind[i - 1]] * j + nums1[ind[i - 1]]);
+
+            if (s + j * d - dp[j] <= x) {
+                r = j;
+            }
+        }
+    }
+
+    return r <= n ? r : -1;
+}
+
+// Example usage:
+const nums1 = [1, 2, 3];
+const nums2 = [4, 5, 6];
+const x = 10;
+
+console.log(minimumTime(nums1, nums2, x)); // Output: 2
+
+
 
 ///
 var lengthOfLIS = function(nums, k) {
