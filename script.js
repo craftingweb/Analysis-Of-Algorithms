@@ -1,3 +1,22 @@
+///
+const ll = BigInt;
+
+const subStrHash = (s, p, mod, k, hashValue) => {
+    p = ll(p), mod = ll(mod);
+    let n = s.length, idx = n, sum = 0n, powerTok = 1n;
+    for (let i = 0; i < k - 1; i++) powerTok = powerTok * p % mod;
+    for (let i = n - 1; i >= 0; i--) {
+        let startVal = s[i].charCodeAt() - 96;
+        sum = (sum * p + ll(startVal)) % mod;
+        if (i + k <= n) {
+            if (sum == hashValue) idx = i;
+            let endVal = s[i + k - 1].charCodeAt() - 96;
+            sum = (sum - powerTok * ll(endVal)) % mod;
+            if (sum < 0) sum += mod;
+        }
+    }
+    return s.slice(idx, idx + k);
+};
 ////
 var minimumVisitedCells = function(grid) {
   let m = grid.length, n = grid[0].length;
