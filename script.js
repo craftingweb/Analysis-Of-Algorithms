@@ -1,3 +1,16 @@
+var subtractProductAndSum = function(n) {
+let str = String(n)
+  .split("")
+  .map((n) => Number(n));
+let muliplication = 1;
+let summation = 0;
+for (let i of str) {
+  muliplication *= i;
+  summation += i;
+}
+return muliplication - summation;
+};
+//
 var invalidTransactions = function(transactions) {
     const n = transactions.length;
     const added = new Array(n).fill(false);
