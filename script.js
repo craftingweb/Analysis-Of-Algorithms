@@ -1,4 +1,35 @@
- class TreeNode {
+var myAtoi = function(s) {
+    let i = 0;
+    while (i < s.length && s[i] === ' ') {
+        i++;
+    }
+
+    let sign = 1;
+    if (s[i] === '+' || s[i] === '-') {
+        sign = s[i] === '-' ? -1 : 1;
+        i++;
+    }
+
+    let result = 0;
+    while (i < s.length && isDigit(s[i])) {
+        result = result * 10 + parseInt(s[i]);
+        i++;
+    }
+
+    result *= sign;
+
+    const INT_MAX = 2 ** 31 - 1;
+    const INT_MIN = -(2 ** 31);
+    result = Math.max(INT_MIN, Math.min(INT_MAX, result));
+
+    return result;
+};
+
+function isDigit(char) {
+    return char >= '0' && char <= '9';
+}
+//
+class TreeNode {
      constructor(val, left=null, right = null){
          this.val = val;
          this.left = left;
