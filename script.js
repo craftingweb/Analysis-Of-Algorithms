@@ -1,3 +1,45 @@
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var minLengthAfterRemovals = function(nums) {
+    // build priority queue
+    let prev = null;
+    let freq = 0;
+    const queue = new MaxPriorityQueue();
+
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] !== prev) {
+            if (freq > 0) {
+                queue.enqueue(freq);
+            }
+
+            prev = nums[i];
+            freq = 1;
+        } else {
+            freq++;
+        }
+    }
+    queue.enqueue(freq);
+
+    // remove values until we have something to remove
+    let count = nums.length;
+    while (queue.size() > 1) {
+        let larger = queue.dequeue().element;
+        let smaller = queue.dequeue().element;
+
+        count -= 2;
+        if (larger - 1 > 0) {
+            queue.enqueue(larger - 1)
+        }
+        if (smaller - 1 > 0) {
+            queue.enqueue(smaller - 1)
+        }
+    }
+    
+    return count;
+};
+//
 var myAtoi = function(s) {
     let i = 0;
     while (i < s.length && s[i] === ' ') {
