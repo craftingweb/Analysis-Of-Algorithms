@@ -1,3 +1,44 @@
+
+var squareFreeSubsets = function (nums) {
+  const LEN = nums.length;
+  const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+
+  function getMask(num) {
+    let mask = 0;
+    for (let i = 0; i < 10; i++) {
+      let samePrimeCount = 0;
+      while (num % primes[i] === 0) {
+        samePrimeCount += 1;
+        num /= primes[i];
+      }
+      if (samePrimeCount > 1) return -1; // if a number is getting divided with a prime more than 1 time meaning it can be divided by that primes square
+      if (samePrimeCount === 1) mask |= 1 << i; // i + 1 because the for i === 0 product 1 has already been taken
+    }
+    return mask;
+  }
+
+  function dfs(ind, runningMask, nums) {
+    if (ind === LEN) return 0;
+    if (dp[ind][runningMask] !== undefined) return dp[ind][runningMask];
+
+    let mask = getMask(nums[ind]);
+    let ans = dfs(ind + 1, runningMask, nums);
+
+    if (mask !== -1 && (runningMask & mask) === 0) {
+      ans++;
+      ans = (ans + dfs(ind + 1, runningMask | mask, nums)) % mod;
+    }
+    dp[ind][runningMask] = ans;
+    return ans;
+  }
+
+  let mod = 1e9 + 7;
+  let dp = [];
+  for (let i = 0; i < LEN; i++) dp[i] = [];
+
+  return dfs(0, 0, nums); //
+};
+//
 var totalSteps = function(nums) {
 	let stack = [],
 		dp = new Array(nums.length).fill(0),
