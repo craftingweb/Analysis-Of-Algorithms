@@ -1,4 +1,15 @@
+var maximumTop = function(nums, k) {
+    if (nums.length === 1 && k % 2) return -1
+    let max = -Infinity
 
+    for (let i = 0; i <= k && i < nums.length; i++) {
+        if (i === k - 1) continue
+        if (nums[i] > max) max = nums[i]
+    }
+
+    return max > -Infinity ? max : -1
+};
+///
 var squareFreeSubsets = function (nums) {
   const LEN = nums.length;
   const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
